@@ -1,67 +1,176 @@
-import { useState } from 'react';
-import { MapPin, Star, Clock, Phone, Navigation } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import { MapPin, Star, Clock, Phone, Navigation, LocateFixed, Loader2, AlertTriangle } from 'lucide-react';
 import { clinics } from '@/data';
 import type { Clinic } from '@/types';
 import { AppHeader } from '@/components/AppHeader';
 
+const FALLBACK_CENTER: [number, number] = [-23.5613, -46.6565]; // Av. Paulista, SP
+
+function haversineKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {
+  const R = 6371;
+  const dLat = ((b.lat - a.lat) * Math.PI) / 180;
+  const dLng = ((b.lng - a.lng) * Math.PI) / 180;
+  const s =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((a.lat * Math.PI) / 180) * Math.cos((b.lat * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(s));
+}
+
+const userIcon = L.divIcon({
+  className: '',
+  html: `<div style="position:relative;width:22px;height:22px">
+    <div style="position:absolute;inset:-6px;border-radius:9999px;background:rgba(20,184,166,0.25);animation:ping 1.5s cubic-bezier(0,0,0.2,1) infinite"></div>
+    <div style="position:absolute;inset:0;border-radius:9999px;background:#0d9488;border:3px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3)"></div>
+  </div>`,
+  iconSize: [22, 22],
+  iconAnchor: [11, 11],
+});
+
+const clinicIcon = (active: boolean) =>
+  L.divIcon({
+    className: '',
+    html: `<div style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9999px;background:${active ? '#b45309' : 'white'};border:2px solid ${active ? '#b45309' : '#d6c3a9'};box-shadow:0 2px 6px rgba(0,0,0,0.25)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="${active ? 'white' : '#b45309'}" stroke="${active ? 'white' : '#b45309'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+        <circle cx="12" cy="10" r="3" fill="${active ? '#b45309' : 'white'}" stroke="none"/>
+      </svg>
+    </div>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+  });
+
+function Recenter({ center, zoom }: { center: [number, number]; zoom: number }) {
+  const map = useMap();
+  useEffect(() => {
+    map.flyTo(center, zoom, { duration: 0.8 });
+  }, [center, zoom, map]);
+  return null;
+}
+
+function formatKm(km: number) {
+  return km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`;
+}
+
 export function ClinicsScreen() {
   const [selected, setSelected] = useState<Clinic | null>(null);
-  const sorted = [...clinics].sort((a, b) => a.distance - b.distance);
+  const [position, setPosition] = useState<[number, number] | null>(null);
+  const [locating, setLocating] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
+
+  const locate = () => {
+    if (!('geolocation' in navigator)) {
+      setLocationError('Seu aparelho não oferece suporte a GPS.');
+      return;
+    }
+    setLocating(true);
+    setLocationError(null);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setPosition([pos.coords.latitude, pos.coords.longitude]);
+        setLocating(false);
+      },
+      () => {
+        setLocationError('Não foi possível obter sua localização. Verifique se o GPS está ativado e a permissão concedida.');
+        setLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 }
+    );
+  };
+
+  useEffect(() => {
+    locate();
+  }, []);
+
+  const center = position ?? FALLBACK_CENTER;
+
+  const clinicsWithDistance = useMemo(
+    () =>
+      clinics
+        .map((c) => ({
+          clinic: c,
+          distance: position ? haversineKm({ lat: center[0], lng: center[1] }, c) : null,
+        }))
+        .sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity)),
+    [position, center[0], center[1]]
+  );
+
+  const openDirections = (c: Clinic) => {
+    const dest = `${c.lat},${c.lng}`;
+    const origin = position ? `${position[0]},${position[1]}` : '';
+    const url = origin
+      ? `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}`
+      : `https://www.google.com/maps/dir/?api=1&destination=${dest}`;
+    window.open(url, '_blank', 'noopener');
+  };
 
   return (
     <div className="min-h-screen pb-24">
       <AppHeader title="Guia de Clínicas" subtitle="Veterinários próximos de você" />
 
       <div className="px-4 pt-4">
-        <div className="relative rounded-2xl overflow-hidden shadow-sm border border-secondary-200 mb-4 h-64 bg-gradient-to-br from-secondary-100 via-primary-50 to-secondary-50">
-          <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
-            <defs>
-              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#cbd5e1" strokeWidth="0.5" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#grid)" />
-            <path d="M 0 120 Q 80 100 160 140 T 320 130" fill="none" stroke="#93c5fd" strokeWidth="3" opacity="0.4" />
-            <path d="M 0 60 L 200 70 L 300 50" fill="none" stroke="#86efac" strokeWidth="4" opacity="0.3" />
-          </svg>
-
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-            <div className="relative">
-              <div className="w-6 h-6 rounded-full bg-secondary-500 ring-4 ring-secondary-200 animate-pulse" />
-              <div className="absolute -top-1 -left-1 w-8 h-8 rounded-full bg-secondary-400/30 animate-ping" />
-            </div>
-          </div>
-
-          {sorted.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => setSelected(c)}
-              className="absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-200"
-              style={{ left: `${c.x}%`, top: `${c.y}%` }}
-            >
-              <div
-                className={`p-2.5 rounded-full shadow-md transition-all duration-300 ${
-                  selected?.id === c.id
-                    ? 'bg-primary-600 scale-125 ring-4 ring-primary-200'
-                    : 'bg-white hover:scale-110'
-                }`}
+        <div className="relative rounded-2xl overflow-hidden shadow-sm border border-secondary-200 mb-4 h-72 z-0">
+          <MapContainer center={center} zoom={position ? 14 : 13} className="h-full w-full" zoomControl={false}>
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <Recenter center={center} zoom={position ? 14 : 13} />
+            {position && (
+              <>
+                <Circle center={position} radius={120} pathOptions={{ color: '#0d9488', weight: 0, fillColor: '#0d9488', fillOpacity: 0.12 }} />
+                <Marker position={position} icon={userIcon}>
+                  <Popup>Você está aqui</Popup>
+                </Marker>
+              </>
+            )}
+            {clinics.map((c) => (
+              <Marker
+                key={c.id}
+                position={[c.lat, c.lng]}
+                icon={clinicIcon(selected?.id === c.id)}
+                eventHandlers={{ click: () => setSelected(c) }}
               >
-                <MapPin
-                  size={18}
-                  className={selected?.id === c.id ? 'text-white' : 'text-primary-600'}
-                  fill={selected?.id === c.id ? 'white' : 'currentColor'}
-                />
-              </div>
-            </button>
-          ))}
+                <Popup>
+                  <strong>{c.name}</strong>
+                  <br />
+                  {c.address}
+                </Popup>
+              </Marker>
+            ))}
+          </MapContainer>
 
-          <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg shadow-sm">
-            <p className="text-xs font-medium text-gray-600">Sua localização</p>
-          </div>
+          <button
+            onClick={locate}
+            className="absolute bottom-3 right-3 z-[1000] flex items-center gap-1.5 rounded-full bg-white px-3.5 py-2.5 shadow-lg border border-secondary-200 active:scale-95 transition-transform"
+          >
+            {locating ? (
+              <Loader2 size={16} className="animate-spin text-primary-600" />
+            ) : (
+              <LocateFixed size={16} className="text-primary-600" />
+            )}
+            <span className="text-xs font-semibold text-primary-700">{locating ? 'Localizando...' : 'Meu GPS'}</span>
+          </button>
         </div>
 
+        {locationError && (
+          <div className="flex items-start gap-2 mb-3 rounded-xl bg-amber-50 border border-amber-200 px-3.5 py-2.5">
+            <AlertTriangle size={16} className="text-amber-500 mt-0.5 shrink-0" />
+            <p className="text-xs text-amber-700 leading-relaxed">{locationError}</p>
+          </div>
+        )}
+
+        {!position && !locationError && (
+          <div className="flex items-start gap-2 mb-3 rounded-xl bg-secondary-100 border border-secondary-200 px-3.5 py-2.5">
+            <Loader2 size={16} className="animate-spin text-primary-500 mt-0.5 shrink-0" />
+            <p className="text-xs text-gray-600 leading-relaxed">Obtendo sua localização pelo GPS...</p>
+          </div>
+        )}
+
         <div className="space-y-3">
-          {sorted.map((c, i) => (
+          {clinicsWithDistance.map(({ clinic: c, distance }, i) => (
             <button
               key={c.id}
               onClick={() => setSelected(c)}
@@ -71,7 +180,7 @@ export function ClinicsScreen() {
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  {i === 0 && (
+                  {position && i === 0 && (
                     <span className="text-[10px] font-bold text-white bg-primary-500 px-2 py-0.5 rounded-full">
                       MAIS PRÓXIMA
                     </span>
@@ -93,7 +202,11 @@ export function ClinicsScreen() {
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1 text-xs text-gray-500">
                     <Navigation size={13} />
-                    <span className="font-medium text-primary-600">{c.distance} km</span>
+                    {distance !== null ? (
+                      <span className="font-medium text-primary-600">{formatKm(distance)}</span>
+                    ) : (
+                      <span>sem GPS</span>
+                    )}
                   </div>
                   <div className="flex items-center gap-1 text-xs text-gray-500">
                     <Clock size={13} />
@@ -126,7 +239,11 @@ export function ClinicsScreen() {
                 <div className="flex items-center gap-1 mt-1">
                   <Star size={16} className="text-amber-400" fill="currentColor" />
                   <span className="text-sm font-semibold text-amber-600">{selected.rating}</span>
-                  <span className="text-sm text-gray-500">· {selected.distance} km de distância</span>
+                  {position && (
+                    <span className="text-sm text-gray-500">
+                      · {formatKm(haversineKm({ lat: position[0], lng: position[1] }, selected))} de distância
+                    </span>
+                  )}
                 </div>
               </div>
               <button onClick={() => setSelected(null)} className="p-2 rounded-full bg-gray-100">
@@ -142,12 +259,18 @@ export function ClinicsScreen() {
                 <Clock size={16} className="text-primary-500" />
                 {selected.hours}
               </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
+              <a
+                href={`tel:${selected.phone.replace(/\D/g, '')}`}
+                className="flex items-center gap-2 text-sm text-gray-600"
+              >
                 <Phone size={16} className="text-primary-500" />
                 {selected.phone}
-              </div>
+              </a>
             </div>
-            <button className="w-full py-3 rounded-xl bg-primary-500 text-white font-semibold text-sm shadow-md shadow-primary-200 hover:bg-primary-600 transition-colors flex items-center justify-center gap-2">
+            <button
+              onClick={() => openDirections(selected)}
+              className="w-full py-3 rounded-xl bg-primary-500 text-white font-semibold text-sm shadow-md shadow-primary-200 hover:bg-primary-600 transition-colors flex items-center justify-center gap-2"
+            >
               <Navigation size={16} />
               Como Chegar
             </button>

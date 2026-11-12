@@ -30,12 +30,11 @@ export interface Clinic {
   id: string;
   name: string;
   address: string;
-  distance: number;
   rating: number;
   phone: string;
   hours: string;
-  x: number;
-  y: number;
+  lat: number;
+  lng: number;
 }
 
 export type RepeatInterval = 'none' | 'daily' | 'weekly' | 'monthly';
