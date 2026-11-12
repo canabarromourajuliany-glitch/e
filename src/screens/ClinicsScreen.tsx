@@ -171,11 +171,11 @@ export function ClinicsScreen() {
 
         <div className="space-y-3">
           {clinicsWithDistance.map(({ clinic: c, distance }, i) => (
-            <button
+            <div
               key={c.id}
               onClick={() => setSelected(c)}
-              className={`w-full text-left bg-primary-100 rounded-2xl shadow-sm border p-4 transition-all duration-200 ${
-                selected?.id === c.id ? 'border-accent-500 ring-2 ring-accent-200' : 'border-primary-300'
+              className={`w-full text-left bg-accent-500/20 rounded-2xl shadow-sm border p-4 cursor-pointer transition-all duration-200 hover:bg-accent-500/30 ${
+                selected?.id === c.id ? 'border-accent-500 ring-2 ring-accent-200' : 'border-accent-300/60'
               }`}
             >
               <div className="flex items-start justify-between mb-2">
@@ -187,8 +187,8 @@ export function ClinicsScreen() {
                   )}
                   <h3 className="text-base font-bold text-primary-900">{c.name}</h3>
                 </div>
-                <div className="flex items-center gap-1 bg-accent-100 px-2 py-1 rounded-lg">
-                  <Star size={14} className="text-accent-600" fill="currentColor" />
+                <div className="flex items-center gap-1 bg-accent-500/25 px-2 py-1 rounded-lg">
+                  <Star size={14} className="text-accent-700" fill="currentColor" />
                   <span className="text-xs font-semibold text-accent-800">{c.rating}</span>
                 </div>
               </div>
@@ -198,27 +198,38 @@ export function ClinicsScreen() {
                 <p className="text-sm text-gray-500">{c.address}</p>
               </div>
 
-              <div className="flex items-center justify-between mt-2">
+              <div className="flex items-center justify-between mt-3">
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1 text-xs text-gray-500">
+                  <div className="flex items-center gap-1 text-xs text-gray-600">
                     <Navigation size={13} />
                     {distance !== null ? (
-                      <span className="font-medium text-primary-600">{formatKm(distance)}</span>
+                      <span className="font-medium text-primary-700">{formatKm(distance)}</span>
                     ) : (
                       <span>sem GPS</span>
                     )}
                   </div>
-                  <div className="flex items-center gap-1 text-xs text-gray-500">
+                  <div className="flex items-center gap-1 text-xs text-gray-600">
                     <Clock size={13} />
                     {c.hours}
                   </div>
                 </div>
-                <div className="flex items-center gap-1 text-xs text-gray-500">
+                <div className="flex items-center gap-1 text-xs text-gray-600">
                   <Phone size={13} />
                   {c.phone}
                 </div>
               </div>
-            </button>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openDirections(c);
+                }}
+                className="mt-3 w-full flex items-center justify-center gap-2 rounded-xl bg-accent-500/40 border border-accent-500/60 py-2.5 text-sm font-bold text-accent-900 hover:bg-accent-500/60 active:scale-[0.98] transition-all"
+              >
+                <Navigation size={15} />
+                Ver rota no mapa
+              </button>
+            </div>
           ))}
         </div>
       </div>
