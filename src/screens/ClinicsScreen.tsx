@@ -7,7 +7,7 @@ import { clinics } from '@/data';
 import type { Clinic } from '@/types';
 import { AppHeader } from '@/components/AppHeader';
 
-const FALLBACK_CENTER: [number, number] = [-23.5613, -46.6565]; // Av. Paulista, SP
+const FALLBACK_CENTER: [number, number] = [-30.0346, -51.1144]; // Porto Alegre, RS
 
 function haversineKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {
   const R = 6371;
