@@ -2,13 +2,14 @@ import { useState } from 'react';
 import {
   PawPrint, Plus, ChevronLeft, Syringe, Stethoscope, Pill, ShieldCheck,
   Clock, CheckCircle2, Calendar, Trash2, X, Heart, Bell, ChevronRight,
-  Dog, Cat, Bird, Rabbit, Fish, FileText, AlertCircle, Pencil
+  Dog, Cat, Bird, Rabbit, Fish, FileText, AlertCircle, Pencil, Bot
 } from 'lucide-react';
 import type { Session } from '@supabase/supabase-js';
 import type { Pet, CareRecord, CareTask } from '@/types';
 import { AppHeader } from '@/components/AppHeader';
 import { PetForm, CareRecordForm, TaskForm } from './CareForms';
 import { VaccineBooklet } from './VaccineBooklet';
+import { AiChat } from './AiChat';
 import { formatDay, daysFromToday } from '@/lib/dates';
 import { supabase } from '@/lib/supabase';
 
@@ -86,6 +87,7 @@ export function CareScreen(props: CareScreenProps) {
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [starting, setStarting] = useState(false);
   const [startError, setStartError] = useState('');
+  const [showChat, setShowChat] = useState(false);
 
   const startVisitorSession = async () => {
     setStarting(true);
@@ -269,6 +271,14 @@ export function CareScreen(props: CareScreenProps) {
         </div>
 
         {showPetForm && <PetForm onClose={() => setShowPetForm(false)} onSave={onAddPet} pet={editPet} />}
+        <button
+          onClick={() => setShowChat(true)}
+          className="fixed bottom-24 right-4 z-40 flex items-center gap-2 rounded-full bg-accent-500 pl-4 pr-5 py-3.5 font-bold text-primary-900 shadow-lg shadow-accent-300 hover:bg-accent-400 transition-colors active:scale-95"
+        >
+          <Bot size={20} />
+          <span className="text-sm">Tirar dúvidas</span>
+        </button>
+        {showChat && <AiChat onClose={() => setShowChat(false)} />}
       </div>
     );
   }

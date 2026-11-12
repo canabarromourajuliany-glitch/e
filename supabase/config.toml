@@ -1,0 +1,2 @@
+[functions.pet-ai-chat]
+verify_jwt = true
