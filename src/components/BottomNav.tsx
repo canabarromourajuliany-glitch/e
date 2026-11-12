@@ -1,4 +1,4 @@
-import { Heart, HandHeart, ShieldAlert, Bell, MapPin } from 'lucide-react';
+import { Heart, HandHeart, ShieldAlert, HeartPulse, MapPin, UserRound, Bird } from 'lucide-react';
 import type { TabId } from '@/types';
 
 interface BottomNavProps {
@@ -10,8 +10,10 @@ const items: { id: TabId; label: string; icon: typeof Heart }[] = [
   { id: 'adoption', label: 'Adoção', icon: Heart },
   { id: 'donations', label: 'Doações', icon: HandHeart },
   { id: 'reports', label: 'Denúncias', icon: ShieldAlert },
-  { id: 'reminders', label: 'Lembretes', icon: Bell },
+  { id: 'care', label: 'Cuidado', icon: HeartPulse },
   { id: 'clinics', label: 'Clínicas', icon: MapPin },
+  { id: 'wildlife', label: 'Silvestres', icon: Bird },
+  { id: 'account', label: 'Conta', icon: UserRound },
 ];
 
 export function BottomNav({ active, onChange }: BottomNavProps) {
@@ -29,13 +31,13 @@ export function BottomNav({ active, onChange }: BottomNavProps) {
             >
               <div
                 className={`p-1.5 rounded-xl transition-all duration-300 ${
-                  isActive ? 'bg-primary-400/70 scale-110 shadow-md' : 'scale-100'
+                  isActive ? 'bg-accent-500 scale-110 shadow-md' : 'scale-100'
                 }`}
               >
                 <Icon
                   size={22}
                   strokeWidth={2}
-                  className="text-white transition-colors duration-200"
+                  className={`transition-colors duration-200 ${isActive ? 'text-primary-900' : 'text-white'}`}
                   fill={isActive ? 'currentColor' : 'none'}
                 />
               </div>

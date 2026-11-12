@@ -1,12 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Heart, MapPin, Check, X, ChevronLeft } from 'lucide-react';
 import type { Animal } from '@/types';
 import { animals } from '@/data';
 import { AppHeader } from '@/components/AppHeader';
+import { supabase } from '@/lib/supabase';
 
 export function AdoptionScreen() {
   const [interested, setInterested] = useState<Set<string>>(new Set());
   const [selected, setSelected] = useState<Animal | null>(null);
+  const [userAnimals, setUserAnimals] = useState<Animal[]>([]);
+
+  useEffect(() => {
+    supabase.from('adoption_posts').select('*').order('created_at', { ascending: false }).then(({ data }) => {
+      if (data) setUserAnimals(data as Animal[]);
+    });
+  }, []);
+
+  const visibleAnimals = [...animals, ...userAnimals];
 
   const toggleInterest = (id: string) => {
     setInterested((prev) => {
@@ -18,18 +28,18 @@ export function AdoptionScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary-50/40 to-white pb-24">
+    <div className="min-h-screen pb-24">
       <AppHeader title="Painel de Adoção" subtitle="Encontre seu novo melhor amigo" />
 
       <div className="px-4 pt-4 space-y-4">
-        {animals.map((animal) => (
+        {visibleAnimals.map((animal) => (
           <div
             key={animal.id}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden animate-slide-up"
+            className="bg-secondary-100 rounded-2xl shadow-sm border border-secondary-200 overflow-hidden animate-slide-up"
           >
             <div className="relative" onClick={() => setSelected(animal)}>
               <img
-                src={animal.photo}
+                src={animal.photo || animals[0].photo}
                 alt={animal.name}
                 className="w-full h-52 object-cover cursor-pointer"
                 loading="lazy"
@@ -64,10 +74,10 @@ export function AdoptionScreen() {
             <div className="p-4">
               <div className="flex items-start justify-between mb-2">
                 <div>
-                  <h3 className="text-lg font-bold text-gray-800">{animal.name}</h3>
+                  <h3 className="text-lg font-bold text-primary-900">{animal.name}</h3>
                   <p className="text-sm text-gray-500">{animal.breed}</p>
                 </div>
-                <span className="text-sm font-medium text-gray-400">{animal.age}</span>
+                <span className="text-sm font-medium text-gray-500">{animal.age}</span>
               </div>
 
               <div className="flex gap-2 mb-3">
@@ -83,32 +93,16 @@ export function AdoptionScreen() {
                 )}
               </div>
 
-              <div className="flex gap-2">
-                <button
-                  onClick={() => toggleInterest(animal.id)}
-                  className={`flex-1 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 ${
-                    interested.has(animal.id)
-                      ? 'bg-primary-500 text-white shadow-md shadow-primary-200'
-                      : 'bg-primary-50 text-primary-700 hover:bg-primary-100'
-                  }`}
-                >
-                  {interested.has(animal.id) ? '✓ Tenho Interesse' : 'Tenho Interesse'}
-                </button>
-                <button
-                  onClick={() => toggleInterest(animal.id)}
-                  className={`flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-300 active:scale-90 ${
-                    interested.has(animal.id)
-                      ? 'bg-error-50 shadow-sm'
-                      : 'bg-gray-50 hover:bg-gray-100'
-                  }`}
-                >
-                  <Heart
-                    size={20}
-                    className={interested.has(animal.id) ? 'text-error-500' : 'text-gray-400'}
-                    fill={interested.has(animal.id) ? 'currentColor' : 'none'}
-                  />
-                </button>
-              </div>
+              <button
+                onClick={() => toggleInterest(animal.id)}
+                className={`w-full py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 ${
+                  interested.has(animal.id)
+                    ? 'bg-primary-500 text-white shadow-md shadow-primary-200'
+                    : 'bg-primary-50 text-primary-700 hover:bg-primary-100'
+                }`}
+              >
+                {interested.has(animal.id) ? '✓ Tenho Interesse' : 'Tenho Interesse'}
+              </button>
             </div>
           </div>
         ))}
@@ -132,10 +126,10 @@ export function AdoptionScreen() {
                 <X size={18} className="text-gray-600" />
               </button>
             </div>
-            <img src={selected.photo} alt={selected.name} className="w-full h-64 object-cover rounded-2xl mb-4" />
+            <img src={selected.photo || animals[0].photo} alt={selected.name} className="w-full h-64 object-cover rounded-2xl mb-4" />
             <div className="flex items-center gap-2 mb-1">
-              <h2 className="text-2xl font-bold text-gray-800">{selected.name}</h2>
-              <span className="text-sm text-gray-400 mt-1">{selected.age}</span>
+              <h2 className="text-2xl font-bold text-primary-900">{selected.name}</h2>
+              <span className="text-sm text-gray-500 mt-1">{selected.age}</span>
             </div>
             <p className="text-gray-500 mb-3">{selected.breed} · {selected.gender}</p>
             <p className="text-gray-600 leading-relaxed mb-4">{selected.description}</p>

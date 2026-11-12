@@ -1,6 +1,6 @@
 export function AppHeader({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
-    <header className="sticky top-0 z-30 bg-gradient-to-r from-primary-700 via-primary-600 to-secondary-600 px-5 pt-5 pb-5 shadow-lg">
+    <header className="sticky top-0 z-30 bg-primary-600 border-b-4 border-accent-500 px-5 pt-5 pb-5 shadow-lg">
       <div className="flex items-center gap-3.5">
         <div className="h-16 w-16 shrink-0 overflow-hidden rounded-2xl border-2 border-white/80 bg-white shadow-lg ring-4 ring-white/15">
           <img

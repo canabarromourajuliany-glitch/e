@@ -9,11 +9,11 @@ export function ClinicsScreen() {
   const sorted = [...clinics].sort((a, b) => a.distance - b.distance);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-secondary-50/40 to-white pb-24">
+    <div className="min-h-screen pb-24">
       <AppHeader title="Guia de Clínicas" subtitle="Veterinários próximos de você" />
 
       <div className="px-4 pt-4">
-        <div className="relative rounded-2xl overflow-hidden shadow-sm border border-gray-100 mb-4 h-64 bg-gradient-to-br from-secondary-100 via-primary-50 to-secondary-50">
+        <div className="relative rounded-2xl overflow-hidden shadow-sm border border-secondary-200 mb-4 h-64 bg-gradient-to-br from-secondary-100 via-primary-50 to-secondary-50">
           <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
             <defs>
               <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -65,8 +65,8 @@ export function ClinicsScreen() {
             <button
               key={c.id}
               onClick={() => setSelected(c)}
-              className={`w-full text-left bg-white rounded-2xl shadow-sm border p-4 transition-all duration-200 ${
-                selected?.id === c.id ? 'border-primary-300 ring-1 ring-primary-200' : 'border-gray-100'
+              className={`w-full text-left bg-secondary-100 rounded-2xl shadow-sm border p-4 transition-all duration-200 ${
+                selected?.id === c.id ? 'border-primary-300 ring-1 ring-primary-200' : 'border-secondary-200'
               }`}
             >
               <div className="flex items-start justify-between mb-2">
@@ -76,7 +76,7 @@ export function ClinicsScreen() {
                       MAIS PRÓXIMA
                     </span>
                   )}
-                  <h3 className="text-base font-bold text-gray-800">{c.name}</h3>
+                  <h3 className="text-base font-bold text-primary-900">{c.name}</h3>
                 </div>
                 <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-lg">
                   <Star size={14} className="text-amber-400" fill="currentColor" />
@@ -85,22 +85,22 @@ export function ClinicsScreen() {
               </div>
 
               <div className="flex items-center gap-1.5 mb-1">
-                <MapPin size={14} className="text-gray-400 flex-shrink-0" />
+                <MapPin size={14} className="text-gray-500 flex-shrink-0" />
                 <p className="text-sm text-gray-500">{c.address}</p>
               </div>
 
               <div className="flex items-center justify-between mt-2">
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1 text-xs text-gray-400">
+                  <div className="flex items-center gap-1 text-xs text-gray-500">
                     <Navigation size={13} />
                     <span className="font-medium text-primary-600">{c.distance} km</span>
                   </div>
-                  <div className="flex items-center gap-1 text-xs text-gray-400">
+                  <div className="flex items-center gap-1 text-xs text-gray-500">
                     <Clock size={13} />
                     {c.hours}
                   </div>
                 </div>
-                <div className="flex items-center gap-1 text-xs text-gray-400">
+                <div className="flex items-center gap-1 text-xs text-gray-500">
                   <Phone size={13} />
                   {c.phone}
                 </div>
@@ -122,11 +122,11 @@ export function ClinicsScreen() {
             <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-4" />
             <div className="flex items-start justify-between mb-3">
               <div>
-                <h2 className="text-lg font-bold text-gray-800">{selected.name}</h2>
+                <h2 className="text-lg font-bold text-primary-900">{selected.name}</h2>
                 <div className="flex items-center gap-1 mt-1">
                   <Star size={16} className="text-amber-400" fill="currentColor" />
                   <span className="text-sm font-semibold text-amber-600">{selected.rating}</span>
-                  <span className="text-sm text-gray-400">· {selected.distance} km de distância</span>
+                  <span className="text-sm text-gray-500">· {selected.distance} km de distância</span>
                 </div>
               </div>
               <button onClick={() => setSelected(null)} className="p-2 rounded-full bg-gray-100">

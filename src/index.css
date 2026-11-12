@@ -7,12 +7,30 @@
     -webkit-tap-highlight-color: transparent;
   }
   body {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'DM Sans', system-ui, sans-serif;
     overscroll-behavior-y: none;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: 'DM Serif Display', Georgia, serif;
+    line-height: 1.2;
   }
 }
 
 @layer utilities {
+  .field {
+    width: 100%;
+    border: 1px solid #d6c3a9;
+    border-radius: 0.75rem;
+    background: white;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    outline: none;
+  }
+  .field:focus {
+    border-color: #e8913a;
+  }
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;

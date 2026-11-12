@@ -41,7 +41,7 @@ export function ReportsScreen() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-error-50/30 to-white pb-24">
+    <div className="min-h-screen pb-24">
       <AppHeader title="Denúncias" subtitle="Reporte maus-tratos com segurança" />
 
       <div className="px-4 pt-4">
@@ -66,7 +66,7 @@ export function ReportsScreen() {
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-5">
+        <div className="bg-secondary-100 rounded-2xl shadow-sm border border-secondary-200 p-5 space-y-5">
           <button
             onClick={() => setAnonymous(!anonymous)}
             className={`w-full flex items-center justify-between p-3.5 rounded-xl transition-all duration-200 border-2 ${
@@ -83,7 +83,7 @@ export function ReportsScreen() {
                 <p className={`text-sm font-semibold ${anonymous ? 'text-secondary-700' : 'text-gray-600'}`}>
                   Denúncia Anônima
                 </p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-gray-500">
                   {anonymous ? 'Seus dados não serão compartilhados' : 'Toque para ocultar sua identidade'}
                 </p>
               </div>
@@ -168,13 +168,13 @@ export function ReportsScreen() {
                   className="w-20 h-20 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center hover:border-primary-400 hover:bg-primary-50/30 transition-all duration-200"
                 >
                   <div className="flex flex-col items-center gap-1">
-                    <Camera size={20} className="text-gray-400" />
-                    <span className="text-[10px] text-gray-400">Adicionar</span>
+                    <Camera size={20} className="text-gray-500" />
+                    <span className="text-[10px] text-gray-500">Adicionar</span>
                   </div>
                 </button>
               )}
             </div>
-            <p className="text-xs text-gray-400 mt-2">{photos.length}/5 fotos anexadas</p>
+            <p className="text-xs text-gray-500 mt-2">{photos.length}/5 fotos anexadas</p>
           </div>
 
           <button
