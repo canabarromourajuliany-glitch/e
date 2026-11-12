@@ -2,10 +2,10 @@ import { AlertTriangle, Bird, CheckCircle2, CircleAlert, Phone, ShieldCheck } fr
 import { AppHeader } from '@/components/AppHeader';
 
 const animals = [
-  { name: 'Tucano', description: 'Ave de bico grande encontrada em áreas de mata e arborizadas.', tone: 'bg-accent-100', photo: 'https://images.pexels.com/photos/31085629/pexels-photo-31085629.jpeg?auto=compress&cs=tinysrgb&h=650&w=940' },
-  { name: 'Capivara', description: 'Mamífero que vive perto de rios, lagos e áreas alagadas.', tone: 'bg-secondary-200', photo: 'https://images.pexels.com/photos/21348644/pexels-photo-21348644.jpeg?auto=compress&cs=tinysrgb&h=650&w=940' },
-  { name: 'Tamanduá-bandeira', description: 'Animal de hábitos terrestres que precisa de distância e silêncio.', tone: 'bg-primary-100', photo: 'https://images.pexels.com/photos/39962371/pexels-photo-39962371.jpeg?auto=compress&cs=tinysrgb&h=650&w=940' },
-  { name: 'Ouriço-cacheiro', description: 'Pequeno mamífero noturno que pode aparecer em áreas urbanas.', tone: 'bg-accent-100', photo: 'https://images.pexels.com/photos/18447656/pexels-photo-18447656.jpeg?auto=compress&cs=tinysrgb&h=650&w=940' },
+  { name: 'Gambá', description: 'Marsupial noturno comum em quintais e muros. Não é agressivo: se deixar caminho, ele segue viagem.', tone: 'bg-secondary-200', photo: 'https://images.pexels.com/photos/6135639/pexels-photo-6135639.jpeg?auto=compress&cs=tinysrgb&h=650&w=940' },
+  { name: 'Ouriço-cacheiro', description: 'Pequeno mamífero noturno que pode aparecer em quintais e terrenos baldios do bairro.', tone: 'bg-accent-100', photo: 'https://images.pexels.com/photos/18447656/pexels-photo-18447656.jpeg?auto=compress&cs=tinysrgb&h=650&w=940' },
+  { name: 'Bugio-ruivo', description: 'Macaco de ruído alto que vive nas árvores. Observe de longe e não ofereça alimento.', tone: 'bg-primary-100', photo: 'https://images.pexels.com/photos/31252289/pexels-photo-31252289.jpeg?auto=compress&cs=tinysrgb&h=650&w=940' },
+  { name: 'Sagui', description: 'Pequeno macaco ágil visto em árvores e telhados. Nunca capture nem alimente: ele se machuca fácil.', tone: 'bg-accent-100', photo: 'https://images.pexels.com/photos/39999315/pexels-photo-39999315.jpeg?auto=compress&cs=tinysrgb&h=650&w=940' },
 ];
 
 const procedures = [
