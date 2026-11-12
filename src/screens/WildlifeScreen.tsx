@@ -30,7 +30,26 @@ export function WildlifeScreen() {
           <div className="space-y-2">{procedures.map(({ icon: Icon, title, text }) => <div key={title} className="flex gap-3 rounded-2xl border border-secondary-200 bg-secondary-100 p-4"><div className="mt-0.5 rounded-xl bg-white p-2 text-accent-600"><Icon size={19} /></div><div><h3 className="font-bold text-primary-900">{title}</h3><p className="mt-1 text-sm leading-relaxed text-gray-600">{text}</p></div></div>)}</div>
         </section>
 
-        <section className="rounded-2xl border border-accent-200 bg-accent-50 p-4"><div className="flex gap-3"><AlertTriangle className="mt-0.5 shrink-0 text-accent-700" size={21} /><div><h2 className="font-bold text-primary-900">Linha Verde do IBAMA</h2><p className="mt-1 text-sm leading-relaxed text-gray-700">Use para denúncias, orientações e informações sobre animais silvestres, tráfico e crimes ambientais.</p><a href="tel:08000618080" className="mt-3 inline-flex items-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-bold text-white"><Phone size={16} />0800 061 8080</a><p className="mt-2 text-xs text-gray-600">Ligação gratuita. O IBAMA orienta e encaminha cada caso aos órgãos responsáveis.</p></div></div></section>
+        <section className="rounded-2xl border border-accent-200 bg-accent-50 p-4 space-y-4">
+          <div className="flex gap-3">
+            <AlertTriangle className="mt-0.5 shrink-0 text-accent-700" size={21} />
+            <div>
+              <h2 className="font-bold text-primary-900">Linha Verde do IBAMA</h2>
+              <p className="mt-1 text-sm leading-relaxed text-gray-700">Use para denúncias, orientações e informações sobre animais silvestres, tráfico e crimes ambientais.</p>
+              <a href="tel:08000618080" className="mt-3 inline-flex items-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-bold text-white"><Phone size={16} />0800 061 8080</a>
+              <p className="mt-2 text-xs text-gray-600">Ligação gratuita. O IBAMA orienta e encaminha cada caso aos órgãos responsáveis.</p>
+            </div>
+          </div>
+          <div className="flex gap-3 border-t border-accent-200 pt-4">
+            <Phone className="mt-0.5 shrink-0 text-accent-700" size={21} />
+            <div>
+              <h2 className="font-bold text-primary-900">Central 156 — Prefeitura de Porto Alegre</h2>
+              <p className="mt-1 text-sm leading-relaxed text-gray-700">Canal da prefeitura para solicitar resgate de animais silvestres no bairro e relatar situações com a fauna da cidade.</p>
+              <a href="tel:156" className="mt-3 inline-flex items-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-bold text-white"><Phone size={16} />156</a>
+              <p className="mt-2 text-xs text-gray-600">Disponível 24 horas por dia.</p>
+            </div>
+          </div>
+        </section>
 
         <section><h2 className="font-serif text-2xl text-primary-900 mb-3">Exemplos de animais silvestres</h2><div className="grid grid-cols-2 gap-3">{animals.map((animal) => <article key={animal.name} className={`${animal.tone} rounded-2xl overflow-hidden`}><div className="h-32 w-full overflow-hidden"><img src={animal.photo} alt={animal.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-300 hover:scale-105" /></div><div className="p-3"><h3 className="font-serif text-lg text-primary-900">{animal.name}</h3><p className="mt-1 text-xs leading-relaxed text-primary-800/75">{animal.description}</p></div></article>)}</div></section>
 
