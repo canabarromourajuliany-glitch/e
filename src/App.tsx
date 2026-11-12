@@ -18,7 +18,7 @@ function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [guestMode, setGuestMode] = useState(false);
   const [loading, setLoading] = useState(true);
-  const care = useCare(session);
+  const care = useCare(session, guestMode);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -42,7 +42,7 @@ function App() {
     {tab === 'reports' && <ReportsScreen />}
     {tab === 'care' && (
       <CareScreen
-        session={session}
+        guestMode={guestMode}
         pets={care.pets}
         records={care.records}
         tasks={care.tasks}

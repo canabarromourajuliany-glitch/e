@@ -15,6 +15,7 @@ import { supabase } from '@/lib/supabase';
 
 interface CareScreenProps {
   session: Session | null;
+  guestMode: boolean;
   pets: Pet[];
   records: CareRecord[];
   tasks: CareTask[];
@@ -77,7 +78,7 @@ const statusConfig = {
 };
 
 export function CareScreen(props: CareScreenProps) {
-  const { session, pets, records, tasks, loading, onAddPet, onUpdatePet, onDeletePet, onAddRecord, onUpdateRecord, onDeleteRecord, onAddTask, onCompleteTask, onDeleteTask } = props;
+  const { session, guestMode, pets, records, tasks, loading, onAddPet, onUpdatePet, onDeletePet, onAddRecord, onUpdateRecord, onDeleteRecord, onAddTask, onCompleteTask, onDeleteTask } = props;
   const [view, setView] = useState<'dashboard' | 'petDetail'>('dashboard');
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [petTab, setPetTab] = useState<'care' | 'reminders' | 'history'>('care');
@@ -118,7 +119,7 @@ export function CareScreen(props: CareScreenProps) {
     .slice(0, 4);
   const petTasks = selectedPet ? tasks.filter((t) => t.pet_id === selectedPet.id) : [];
 
-  if (!session?.user) {
+  if (!session?.user && !guestMode) {
     return (
       <div className="min-h-screen pb-24">
         <AppHeader title="Cuidado em Dia" subtitle="Saúde e bem-estar do seu pet" />
@@ -128,6 +129,9 @@ export function CareScreen(props: CareScreenProps) {
           <p className="text-sm text-gray-600 max-w-xs mx-auto">Abra um acesso privado para cadastrar animais, registrar vacinas e acompanhar os cuidados, sem formulário de cadastro.</p>
           <button onClick={startVisitorSession} disabled={starting} className="mt-6 inline-flex items-center gap-2 rounded-xl bg-primary-600 px-6 py-3 text-sm font-bold text-white hover:bg-primary-700 disabled:opacity-60">
             {starting ? 'Abrindo...' : 'Abrir meu acesso'}
+          </button>
+          <button onClick={() => setGuestMode(true)} className="mt-3 block w-full max-w-xs mx-auto rounded-xl border border-secondary-300 bg-white py-3 text-sm font-semibold text-primary-700 hover:border-primary-300 transition-colors">
+            Usar sem acesso (dados ficam neste aparelho)
           </button>
           {startError && <p className="mt-3 text-sm text-error-600">{startError}</p>}
         </div>
@@ -154,6 +158,11 @@ export function CareScreen(props: CareScreenProps) {
               {pets.length === 0 ? 'Cadastre seu primeiro animal para começar a acompanhar a rotina de cuidados.'
                 : `Você tem ${pets.length} ${pets.length === 1 ? 'animal' : 'animais'} e ${pendingTasks.length} ${pendingTasks.length === 1 ? 'lembrete' : 'lembretes'} ativos.`}
             </p>
+            {guestMode && !session?.user && (
+              <p className="mt-2 rounded-lg bg-white/15 px-2.5 py-1.5 text-[11px] leading-snug text-white/90">
+                Modo sem acesso: seus dados ficam salvos apenas neste aparelho.
+              </p>
+            )}
           </div>
 
           {/* Alert banner */}
