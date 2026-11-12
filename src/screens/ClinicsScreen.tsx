@@ -174,22 +174,22 @@ export function ClinicsScreen() {
             <button
               key={c.id}
               onClick={() => setSelected(c)}
-              className={`w-full text-left bg-secondary-100 rounded-2xl shadow-sm border p-4 transition-all duration-200 ${
-                selected?.id === c.id ? 'border-primary-300 ring-1 ring-primary-200' : 'border-secondary-200'
+              className={`w-full text-left bg-primary-100 rounded-2xl shadow-sm border p-4 transition-all duration-200 ${
+                selected?.id === c.id ? 'border-accent-500 ring-2 ring-accent-200' : 'border-primary-300'
               }`}
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-2">
                   {position && i === 0 && (
-                    <span className="text-[10px] font-bold text-white bg-primary-500 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-bold text-white bg-primary-700 px-2 py-0.5 rounded-full">
                       MAIS PRÓXIMA
                     </span>
                   )}
                   <h3 className="text-base font-bold text-primary-900">{c.name}</h3>
                 </div>
-                <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-lg">
-                  <Star size={14} className="text-amber-400" fill="currentColor" />
-                  <span className="text-xs font-semibold text-amber-600">{c.rating}</span>
+                <div className="flex items-center gap-1 bg-accent-100 px-2 py-1 rounded-lg">
+                  <Star size={14} className="text-accent-600" fill="currentColor" />
+                  <span className="text-xs font-semibold text-accent-800">{c.rating}</span>
                 </div>
               </div>
 
